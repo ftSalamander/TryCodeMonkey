@@ -10,9 +10,12 @@ import { MockDataService } from '../../../core/mock-data.service';
   template: `
     @if (conversation()) {
       <h1>{{ conversation()!.withName }}</h1>
-      <div class="card stack">
+      <div class="card thread">
         @for (m of conversation()!.messages; track $index) {
-          <div><strong>{{ m.from }}:</strong> {{ m.text }} <span class="hint-text">({{ m.date }})</span></div>
+          <div class="msg" [class.msg-me]="m.from === 'You'">
+            {{ m.text }}
+            <span class="msg-meta">{{ m.from }} · {{ m.date }}</span>
+          </div>
         }
       </div>
       <div class="card">

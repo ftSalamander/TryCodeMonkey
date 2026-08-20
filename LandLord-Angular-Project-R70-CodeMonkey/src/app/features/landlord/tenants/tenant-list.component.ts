@@ -8,9 +8,12 @@ import { MockDataService, TenantRecord } from '../../../core/mock-data.service';
   standalone: true,
   imports: [RouterLink, FormsModule],
   template: `
-    <div class="topbar" style="background:transparent;border:none;padding:0;margin-bottom:1rem;">
+    <div class="page-head">
       <h1>Tenant Management</h1>
-      <a class="btn btn-primary" routerLink="/landlord/tenants/register">Register tenant (walk-in)</a>
+      <a class="btn btn-primary" routerLink="/landlord/tenants/register">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M12 5v14M5 12h14"/></svg>
+        Register tenant (walk-in)
+      </a>
     </div>
 
     <div class="search-bar" style="margin-bottom:1rem;">
@@ -27,6 +30,17 @@ import { MockDataService, TenantRecord } from '../../../core/mock-data.service';
       </select>
     </div>
 
+    <div class="summary-strip">
+      <div class="summary-chip">
+        <span class="chip-value">{{ activeCount() }}</span>
+        <span class="chip-label">Active tenants</span>
+      </div>
+      <div class="summary-chip">
+        <span class="chip-value">{{ data.tenants().length }}</span>
+        <span class="chip-label">Total</span>
+      </div>
+    </div>
+
     <div class="card">
       <div class="table-scroll">
       <table>
@@ -36,20 +50,34 @@ import { MockDataService, TenantRecord } from '../../../core/mock-data.service';
         <tbody>
           @for (t of filteredTenants(); track t.id) {
             <tr>
-              <td>{{ t.name }}</td>
-              <td>{{ t.nationalId }}</td>
-              <td>{{ t.phone }}</td>
+              <td>
+                <span class="thumb-avatar blue" style="width:30px;height:30px;font-size:0.7rem;border-radius:9px;vertical-align:middle;margin-right:0.5rem;">{{ initials(t.name) }}</span>
+                <strong>{{ t.name }}</strong>
+              </td>
+              <td class="tnum">{{ t.nationalId }}</td>
+              <td class="tnum">{{ t.phone }}</td>
               <td>{{ unitLabel(t.unitId) }}</td>
-              <td>{{ t.status }}</td>
-              <td class="actions-row" style="margin:0;">
-                <a class="btn btn-sm" [routerLink]="['/landlord/tenants', t.id]">View</a>
-                @if (t.status === 'active') {
-                  <a class="btn btn-sm btn-danger" [routerLink]="['/landlord/tenants', t.id, 'move-out']">Move out</a>
-                }
+              <td><span class="badge" [class.badge-active]="t.status === 'active'" [class.badge-inactive]="t.status === 'inactive'">{{ t.status }}</span></td>
+              <td>
+                <div class="table-cell-actions">
+                  <a class="btn btn-sm" [routerLink]="['/landlord/tenants', t.id]">View</a>
+                  @if (t.status === 'active') {
+                    <a class="btn btn-sm btn-danger" [routerLink]="['/landlord/tenants', t.id, 'move-out']">Move out</a>
+                  }
+                </div>
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="6" class="hint-text">No tenants match.</td></tr>
+            <tr>
+              <td colspan="6">
+                <div class="empty-state">
+                  <span class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                  </span>
+                  <p>No tenants match.</p>
+                </div>
+              </td>
+            </tr>
           }
         </tbody>
       </table>
@@ -77,6 +105,20 @@ export class TenantListComponent {
       return matchesStatus && matchesQuery;
     });
   });
+
+  activeCount(): number {
+    return this.data.tenants().filter((t) => t.status === 'active').length;
+  }
+
+  initials(name: string): string {
+    return name
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((p) => p[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
+  }
 
   unitLabel(unitId?: string): string {
     return this.data.units().find((u) => u.id === unitId)?.unitNumber ?? '—';

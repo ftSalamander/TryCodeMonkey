@@ -10,12 +10,31 @@ import { CURRENT_TENANT_ID, MockDataService } from '../../core/mock-data.service
     <h1>My Profile</h1>
 
     @if (tenant()) {
-      <div class="card" style="max-width:480px;">
+      <div class="card form-card">
+        <div style="display:flex;align-items:center;gap:0.9rem;margin-bottom:1.1rem;">
+          <span class="avatar" style="width:48px;height:48px;font-size:1rem;">{{ initials(tenant()!.name) }}</span>
+          <div>
+            <strong style="font-size:1.05rem;">{{ tenant()!.name }}</strong>
+            <span class="badge badge-active" style="margin-left:0.5rem;">active</span>
+          </div>
+        </div>
+
         @if (!editing()) {
-          <p><strong>Name:</strong> {{ tenant()!.name }}</p>
-          <p><strong>Phone:</strong> {{ tenant()!.phone }}</p>
-          <p><strong>Email:</strong> {{ tenant()!.email }}</p>
-          <button class="btn btn-primary" (click)="edit()">Edit info</button>
+          <div class="kv-list">
+            <div class="kv">
+              <span class="kv-label">Name</span>
+              <span class="kv-value">{{ tenant()!.name }}</span>
+            </div>
+            <div class="kv">
+              <span class="kv-label">Phone</span>
+              <span class="kv-value tnum">{{ tenant()!.phone }}</span>
+            </div>
+            <div class="kv">
+              <span class="kv-label">Email</span>
+              <span class="kv-value">{{ tenant()!.email }}</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" (click)="edit()" style="margin-top:0.4rem;">Edit info</button>
         } @else {
           <div class="field">
             <label for="name">Name</label>
@@ -52,6 +71,16 @@ export class TenantProfileComponent {
 
   tenant() {
     return this.data.tenants().find((t) => t.id === CURRENT_TENANT_ID);
+  }
+
+  initials(name: string): string {
+    return name
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((p) => p[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
   }
 
   edit(): void {

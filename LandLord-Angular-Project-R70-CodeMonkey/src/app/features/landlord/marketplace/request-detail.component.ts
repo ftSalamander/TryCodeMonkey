@@ -10,15 +10,26 @@ import { MockDataService } from '../../../core/mock-data.service';
   template: `
     @if (request()) {
       <h1>Request — {{ request()!.applicantName }}</h1>
-      <div class="card">
-        <p><strong>Unit requested:</strong> {{ unitLabel() }}</p>
-        <p><strong>Status:</strong> {{ request()!.status }}</p>
+      <div class="card form-card">
+        <div class="kv-list">
+          <div class="kv">
+            <span class="kv-label">Unit requested</span>
+            <span class="kv-value">{{ unitLabel() }}</span>
+          </div>
+          <div class="kv">
+            <span class="kv-label">Status</span>
+            <span class="badge"
+                  [class.badge-pending]="request()!.status === 'pending'"
+                  [class.badge-approved]="request()!.status === 'approved'"
+                  [class.badge-rejected]="request()!.status === 'rejected'">{{ request()!.status }}</span>
+          </div>
+        </div>
         @if (request()!.tenantId) {
           <a [routerLink]="['/landlord/tenants', request()!.tenantId]">View tenant profile</a>
         }
       </div>
 
-      <div class="card">
+      <div class="card form-card">
         <h3>Chat with applicant (optional)</h3>
         <div class="field">
           <textarea rows="3" name="chat" [(ngModel)]="chatMessage" placeholder="Write a message..."></textarea>

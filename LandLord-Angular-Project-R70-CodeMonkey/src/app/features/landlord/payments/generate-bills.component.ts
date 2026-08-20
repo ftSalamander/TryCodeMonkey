@@ -9,23 +9,33 @@ import { InvoiceUtilityLine, MockDataService, periodLabel } from '../../../core/
   template: `
     <h1>Monthly Bills</h1>
     <div class="card">
-      <div class="field" style="max-width:280px;">
-        <label for="period">Month</label>
-        <select id="period" name="period" [ngModel]="selectedPeriod()" (ngModelChange)="selectedPeriod.set($event)">
-          @for (p of data.knownPeriods(); track p) {
-            <option [value]="p">{{ label(p) }}</option>
-          }
-        </select>
+      <div class="form-row" style="align-items:flex-end;">
+        <div class="field" style="max-width:280px;margin-bottom:0;">
+          <label for="period">Month</label>
+          <select id="period" name="period" [ngModel]="selectedPeriod()" (ngModelChange)="selectedPeriod.set($event)">
+            @for (p of data.knownPeriods(); track p) {
+              <option [value]="p">{{ label(p) }}</option>
+            }
+          </select>
+        </div>
+        @if (selectedPeriod() === data.currentPeriod()) {
+          <button class="btn btn-primary" (click)="generate()">Generate bills for this month</button>
+        }
       </div>
 
       @if (selectedPeriod() === data.currentPeriod()) {
-        <p class="hint-text">
-          Bills for the current month are generated automatically. Use this to pick up any tenant who
-          became active after the month started.
-        </p>
-        <button class="btn btn-primary" (click)="generate()">Generate bills for this month</button>
+        <div class="notice notice-info" style="margin-top:0.9rem;margin-bottom:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>
+            Bills for the current month are generated automatically. Use this to pick up any tenant who
+            became active after the month started.
+          </span>
+        </div>
       } @else {
-        <p class="hint-text">Past months are read-only history.</p>
+        <div class="notice notice-info" style="margin-top:0.9rem;margin-bottom:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>Past months are read-only history.</span>
+        </div>
       }
     </div>
 
@@ -38,8 +48,8 @@ import { InvoiceUtilityLine, MockDataService, periodLabel } from '../../../core/
         <tbody>
           @for (i of rows(); track i.id) {
             <tr>
-              <td>{{ tenantName(i.tenantId) }}</td>
-              <td>{{ i.rent }}</td>
+              <td><strong>{{ tenantName(i.tenantId) }}</strong></td>
+              <td class="tnum">৳{{ i.rent }}</td>
               <td>
                 @if (editingId() === i.id) {
                   <div class="stack">
@@ -54,34 +64,45 @@ import { InvoiceUtilityLine, MockDataService, periodLabel } from '../../../core/
                   <button type="button" class="btn btn-sm" style="margin-top:0.4rem;" (click)="addDraftItem()">+ Add charge</button>
                 } @else {
                   @if (i.utilityItems.length) {
-                    <span [title]="utilityBreakdown(i)">{{ data.invoiceUtilitiesTotal(i) }}</span>
+                    <span class="tnum" [title]="utilityBreakdown(i)">৳{{ data.invoiceUtilitiesTotal(i) }}</span>
                   } @else {
                     <span class="hint-text">—</span>
                   }
                 }
               </td>
-              <td>{{ i.prevUnpaidRolled }}</td>
-              <td>
+              <td class="tnum">৳{{ i.prevUnpaidRolled }}</td>
+              <td class="tnum">
                 @if (i.status === 'partial') {
-                  {{ i.balance }}/{{ i.amount }}
+                  <strong>৳{{ i.balance }}/৳{{ i.amount }}</strong>
                 } @else {
-                  {{ i.balance }}
+                  <strong>৳{{ i.balance }}</strong>
                 }
               </td>
               <td><span class="badge" [class.badge-unpaid]="i.status === 'unpaid'" [class.badge-partial]="i.status === 'partial'" [class.badge-paid]="i.status === 'paid'">{{ i.status }}</span></td>
               <td>
                 @if (i.status === 'unpaid') {
-                  @if (editingId() === i.id) {
-                    <button class="btn btn-sm btn-primary" (click)="saveEdit(i.id)">Save</button>
-                    <button class="btn btn-sm" (click)="cancelEdit()">Cancel</button>
-                  } @else {
-                    <button class="btn btn-sm" (click)="startEdit(i)">Edit utilities</button>
-                  }
+                  <div class="table-cell-actions">
+                    @if (editingId() === i.id) {
+                      <button class="btn btn-sm btn-primary" (click)="saveEdit(i.id)">Save</button>
+                      <button class="btn btn-sm" (click)="cancelEdit()">Cancel</button>
+                    } @else {
+                      <button class="btn btn-sm" (click)="startEdit(i)">Edit utilities</button>
+                    }
+                  </div>
                 }
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="7" class="hint-text">No bills for this month yet.</td></tr>
+            <tr>
+              <td colspan="7">
+                <div class="empty-state">
+                  <span class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                  </span>
+                  <p>No bills for this month yet.</p>
+                </div>
+              </td>
+            </tr>
           }
         </tbody>
       </table>

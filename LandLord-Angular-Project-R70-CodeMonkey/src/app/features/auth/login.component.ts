@@ -9,24 +9,24 @@ import { AuthService, UserRole } from '../../core/auth.service';
   imports: [FormsModule, RouterLink],
   template: `
     <div class="card">
-      <h2>Log in</h2>
+      <h2>Welcome back</h2>
       <p>Enter your account email and password.</p>
 
       <form (ngSubmit)="submit()">
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" type="email" name="email" [(ngModel)]="email" required />
+          <input id="email" type="email" name="email" [(ngModel)]="email" placeholder="name@example.com" required />
         </div>
         <div class="field">
           <label for="password">Password</label>
-          <input id="password" type="password" name="password" [(ngModel)]="password" required />
+          <input id="password" type="password" name="password" [(ngModel)]="password" placeholder="••••••••" required />
         </div>
         <div class="field">
           <label for="role">Sign in as</label>
-          <select id="role" name="role" [(ngModel)]="role">
-            <option value="landlord">Landlord</option>
-            <option value="tenant">Tenant</option>
-          </select>
+          <div class="seg" style="width:100%;">
+            <button type="button" [class.active]="role === 'landlord'" (click)="role = 'landlord'">Landlord</button>
+            <button type="button" [class.active]="role === 'tenant'" (click)="role = 'tenant'">Tenant</button>
+          </div>
           <span class="hint-text">Demo stub — role normally comes from the account record.</span>
         </div>
 
@@ -35,14 +35,14 @@ import { AuthService, UserRole } from '../../core/auth.service';
         }
 
         <div class="actions-row">
-          <button type="submit" class="btn btn-primary">Log in</button>
+          <button type="submit" class="btn btn-primary btn-block">Log in</button>
         </div>
       </form>
 
-      <p style="margin-top:1rem;">
+      <div class="auth-links">
         <a routerLink="/auth/forgot-password">Forgot password?</a>
-      </p>
-      <p>
+      </div>
+      <p class="auth-alt">
         Don't have an account? <a routerLink="/auth/signup">Sign up</a>
       </p>
     </div>

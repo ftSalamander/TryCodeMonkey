@@ -9,22 +9,53 @@ import { MockDataService, periodLabel } from '../../../core/mock-data.service';
   imports: [FormsModule],
   template: `
     @if (tenant()) {
-      <h1>{{ tenant()!.name }}</h1>
+      <div class="card" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <span class="avatar" style="width:52px;height:52px;font-size:1.1rem;">{{ initials(tenant()!.name) }}</span>
+        <div style="flex:1;min-width:200px;">
+          <h1 style="margin:0 0 0.2rem;">{{ tenant()!.name }}</h1>
+          <span class="badge" [class.badge-active]="tenant()!.status === 'active'" [class.badge-inactive]="tenant()!.status === 'inactive'">{{ tenant()!.status }}</span>
+        </div>
+      </div>
+
       <div class="card">
-        <p><strong>National ID:</strong> {{ tenant()!.nationalId }}</p>
-        <p><strong>Phone:</strong> {{ tenant()!.phone }}</p>
-        <p><strong>Email:</strong> {{ tenant()!.email }}</p>
-        <p><strong>Unit:</strong> {{ unitLabel() }}</p>
-        <p><strong>Status:</strong> {{ tenant()!.status }}</p>
+        <div class="kv-list">
+          <div class="kv">
+            <span class="kv-label">National ID</span>
+            <span class="kv-value tnum">{{ tenant()!.nationalId }}</span>
+          </div>
+          <div class="kv">
+            <span class="kv-label">Phone</span>
+            <span class="kv-value tnum">{{ tenant()!.phone }}</span>
+          </div>
+          <div class="kv">
+            <span class="kv-label">Email</span>
+            <span class="kv-value">{{ tenant()!.email }}</span>
+          </div>
+          <div class="kv">
+            <span class="kv-label">Unit</span>
+            <span class="kv-value">{{ unitLabel() }}</span>
+          </div>
+        </div>
       </div>
 
       @if (agreement()) {
         <div class="card">
           <h3>Rental agreement</h3>
           @if (!editing()) {
-            <p><strong>Terms:</strong> {{ agreement()!.terms }}</p>
-            <p><strong>Deposit:</strong> {{ agreement()!.deposit }}</p>
-            <p><strong>Start date:</strong> {{ agreement()!.startDate }}</p>
+            <div class="kv-list" style="margin-bottom:1rem;">
+              <div class="kv">
+                <span class="kv-label">Terms</span>
+                <span class="kv-value">{{ agreement()!.terms }}</span>
+              </div>
+              <div class="kv">
+                <span class="kv-label">Deposit</span>
+                <span class="kv-value">৳{{ agreement()!.deposit }}</span>
+              </div>
+              <div class="kv">
+                <span class="kv-label">Start date</span>
+                <span class="kv-value">{{ agreement()!.startDate }}</span>
+              </div>
+            </div>
             <button class="btn" (click)="editing.set(true)">Edit lease agreement</button>
           } @else {
             <div class="field">
@@ -39,18 +70,18 @@ import { MockDataService, periodLabel } from '../../../core/mock-data.service';
         </div>
       }
 
-      <div class="module-grid" style="margin-bottom:1rem;">
-        <div class="card">
-          <p class="hint-text">Total due</p>
-          <h2 style="color:var(--danger);">{{ totalDue() }}</h2>
+      <div class="summary-strip">
+        <div class="summary-chip">
+          <span class="chip-value" style="color:var(--danger);">৳{{ totalDue() }}</span>
+          <span class="chip-label">Total due</span>
         </div>
-        <div class="card">
-          <p class="hint-text">Total paid (lifetime)</p>
-          <h2 style="color:var(--success);">{{ totalPaid() }}</h2>
+        <div class="summary-chip">
+          <span class="chip-value" style="color:var(--success);">৳{{ totalPaid() }}</span>
+          <span class="chip-label">Total paid (lifetime)</span>
         </div>
-        <div class="card">
-          <p class="hint-text">Total maintenance cost (tenant-borne)</p>
-          <h2>{{ totalMaintenanceCost() }}</h2>
+        <div class="summary-chip">
+          <span class="chip-value">৳{{ totalMaintenanceCost() }}</span>
+          <span class="chip-label">Maintenance (tenant-borne)</span>
         </div>
       </div>
 
@@ -63,14 +94,14 @@ import { MockDataService, periodLabel } from '../../../core/mock-data.service';
             @for (i of billingHistory(); track i.id) {
               <tr>
                 <td>{{ monthLabel(i.period) }}</td>
-                <td>{{ i.rent }}</td>
-                <td [title]="i.utilityItems.map(u => u.label + ': ' + u.amount).join(', ')">{{ data.invoiceUtilitiesTotal(i) }}</td>
-                <td>{{ i.prevUnpaidRolled }}</td>
-                <td>
+                <td class="tnum">৳{{ i.rent }}</td>
+                <td class="tnum" [title]="i.utilityItems.map(u => u.label + ': ' + u.amount).join(', ')">৳{{ data.invoiceUtilitiesTotal(i) }}</td>
+                <td class="tnum">৳{{ i.prevUnpaidRolled }}</td>
+                <td class="tnum">
                   @if (i.status === 'partial') {
-                    {{ i.balance }}/{{ i.amount }}
+                    <strong>৳{{ i.balance }}/৳{{ i.amount }}</strong>
                   } @else {
-                    {{ i.balance }}
+                    <strong>৳{{ i.balance }}</strong>
                   }
                 </td>
                 <td><span class="badge" [class.badge-unpaid]="i.status === 'unpaid'" [class.badge-partial]="i.status === 'partial'" [class.badge-paid]="i.status === 'paid'">{{ i.status }}</span></td>
@@ -92,10 +123,10 @@ import { MockDataService, periodLabel } from '../../../core/mock-data.service';
             @for (p of paymentHistory(); track p.id) {
               <tr>
                 <td>{{ p.date }}</td>
-                <td>{{ p.amount }}</td>
+                <td class="tnum">৳{{ p.amount }}</td>
                 <td>{{ p.method }}</td>
                 <td>
-                  <span class="badge" [class.badge-paid]="p.status === 'confirmed'" [class.badge-pending]="p.status === 'pending'" [class.badge-unpaid]="p.status === 'rejected'">
+                  <span class="badge" [class.badge-confirmed]="p.status === 'confirmed'" [class.badge-pending]="p.status === 'pending'" [class.badge-rejected]="p.status === 'rejected'">
                     {{ p.status }}
                   </span>
                 </td>
@@ -119,7 +150,7 @@ import { MockDataService, periodLabel } from '../../../core/mock-data.service';
                 <td>{{ m.date }}</td>
                 <td>{{ m.description }}</td>
                 <td>{{ m.bearer === 'tenant' ? 'Tenant' : 'Landlord' }}</td>
-                <td>{{ m.amount }}</td>
+                <td class="tnum">৳{{ m.amount }}</td>
               </tr>
             } @empty {
               <tr><td colspan="4" class="hint-text">No maintenance costs yet.</td></tr>
@@ -150,6 +181,16 @@ export class TenantDetailComponent {
   constructor() {
     const a = this.agreement();
     if (a) this.termsDraft = a.terms;
+  }
+
+  initials(name: string): string {
+    return name
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((p) => p[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
   }
 
   monthLabel(period: string): string {

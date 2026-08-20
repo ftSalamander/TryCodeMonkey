@@ -40,18 +40,18 @@ function today(): string {
       </div>
     </div>
 
-    <div class="module-grid" style="margin-bottom:1rem;">
-      <div class="card">
-        <p class="hint-text">Total in</p>
-        <h2 style="color:var(--success);">{{ totalIn() }}</h2>
+    <div class="summary-strip">
+      <div class="summary-chip">
+        <span class="chip-value" style="color:var(--success);">+৳{{ totalIn() }}</span>
+        <span class="chip-label">Total in</span>
       </div>
-      <div class="card">
-        <p class="hint-text">Total out</p>
-        <h2 style="color:var(--danger);">{{ totalOut() }}</h2>
+      <div class="summary-chip">
+        <span class="chip-value" style="color:var(--danger);">-৳{{ totalOut() }}</span>
+        <span class="chip-label">Total out</span>
       </div>
-      <div class="card">
-        <p class="hint-text">Net</p>
-        <h2>{{ net() }}</h2>
+      <div class="summary-chip">
+        <span class="chip-value">৳{{ net() }}</span>
+        <span class="chip-label">Net</span>
       </div>
     </div>
 
@@ -65,13 +65,22 @@ function today(): string {
               <td>{{ row.date }}</td>
               <td><span class="badge" [class.badge-paid]="row.type === 'income'" [class.badge-unpaid]="row.type === 'expense'">{{ row.type }}</span></td>
               <td>{{ row.description }}</td>
-              <td [style.color]="row.type === 'income' ? 'var(--success)' : 'var(--danger)'">
-                {{ row.type === 'income' ? '+' : '-' }}{{ row.amount }}
+              <td class="tnum" [class.amount-in]="row.type === 'income'" [class.amount-out]="row.type === 'expense'">
+                {{ row.type === 'income' ? '+' : '-' }}৳{{ row.amount }}
               </td>
-              <td>{{ row.balance }}</td>
+              <td class="tnum">৳{{ row.balance }}</td>
             </tr>
           } @empty {
-            <tr><td colspan="5" class="hint-text">No transactions in this range.</td></tr>
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <span class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                  </span>
+                  <p>No transactions in this range.</p>
+                </div>
+              </td>
+            </tr>
           }
         </tbody>
       </table>

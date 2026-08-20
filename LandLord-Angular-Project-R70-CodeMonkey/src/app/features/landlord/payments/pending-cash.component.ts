@@ -13,16 +13,27 @@ import { MockDataService } from '../../../core/mock-data.service';
         <tbody>
           @for (p of pending(); track p.id) {
             <tr>
-              <td>{{ tenantName(p.tenantId) }}</td>
-              <td>{{ p.amount }}</td>
+              <td><strong>{{ tenantName(p.tenantId) }}</strong></td>
+              <td class="tnum">৳{{ p.amount }}</td>
               <td>{{ p.date }}</td>
               <td>
-                <button class="btn btn-sm btn-primary" (click)="confirm(p.id, true)">Confirm received</button>
-                <button class="btn btn-sm btn-danger" (click)="confirm(p.id, false)">Reject / flag</button>
+                <div class="table-cell-actions">
+                  <button class="btn btn-sm btn-primary" (click)="confirm(p.id, true)">Confirm received</button>
+                  <button class="btn btn-sm btn-danger" (click)="confirm(p.id, false)">Reject / flag</button>
+                </div>
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="4" class="hint-text">No pending cash payments.</td></tr>
+            <tr>
+              <td colspan="4">
+                <div class="empty-state">
+                  <span class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                  </span>
+                  <p>No pending cash payments.</p>
+                </div>
+              </td>
+            </tr>
           }
         </tbody>
       </table>

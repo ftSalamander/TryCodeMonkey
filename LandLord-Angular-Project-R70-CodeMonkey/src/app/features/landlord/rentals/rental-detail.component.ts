@@ -10,11 +10,22 @@ import { MockDataService } from '../../../core/mock-data.service';
   template: `
     @if (agreement()) {
       <h1>Rental agreement</h1>
-      <div class="card" style="max-width:560px;">
+      <div class="card form-card">
         @if (!editing()) {
-          <p><strong>Terms:</strong> {{ agreement()!.terms }}</p>
-          <p><strong>Deposit:</strong> {{ agreement()!.deposit }}</p>
-          <p><strong>Start date:</strong> {{ agreement()!.startDate }}</p>
+          <div class="kv-list" style="margin-bottom:1.2rem;">
+            <div class="kv">
+              <span class="kv-label">Terms</span>
+              <span class="kv-value">{{ agreement()!.terms }}</span>
+            </div>
+            <div class="kv">
+              <span class="kv-label">Deposit</span>
+              <span class="kv-value">৳{{ agreement()!.deposit }}</span>
+            </div>
+            <div class="kv">
+              <span class="kv-label">Start date</span>
+              <span class="kv-value">{{ agreement()!.startDate }}</span>
+            </div>
+          </div>
           <button class="btn btn-primary" (click)="editing.set(true)">Edit / update terms</button>
         } @else {
           <div class="field">

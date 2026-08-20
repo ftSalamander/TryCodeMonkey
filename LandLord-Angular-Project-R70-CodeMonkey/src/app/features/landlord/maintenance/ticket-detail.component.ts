@@ -9,18 +9,37 @@ import { ExpenseRecord, MockDataService, nextId } from '../../../core/mock-data.
   imports: [FormsModule],
   template: `
     @if (ticket()) {
-      <h1>Ticket — {{ ticket()!.description }}</h1>
-      <div class="card stack" style="max-width:520px;">
-        <p><strong>Status:</strong> {{ ticket()!.status }}</p>
+      <h1>Ticket</h1>
+      <div class="card form-card stack">
+        <div class="kv-list">
+          <div class="kv">
+            <span class="kv-label">Unit</span>
+            <span class="kv-value">{{ unitLabel() }}</span>
+          </div>
+          <div class="kv">
+            <span class="kv-label">Tenant</span>
+            <span class="kv-value">{{ tenantName() }}</span>
+          </div>
+          <div class="kv">
+            <span class="kv-label">Description</span>
+            <span class="kv-value">{{ ticket()!.description }}</span>
+          </div>
+          <div class="kv">
+            <span class="kv-label">Status</span>
+            <span class="badge" [class.badge-pending]="ticket()!.status === 'pending'" [class.badge-resolved]="ticket()!.status === 'resolved'">{{ ticket()!.status }}</span>
+          </div>
+        </div>
 
         @if (ticket()!.status === 'pending') {
-          <button class="btn btn-primary" (click)="askCost()">Update status: Resolved</button>
+          @if (!asking()) {
+            <button class="btn btn-primary" (click)="askCost()">Mark resolved</button>
+          }
 
           @if (asking() && !costingForm()) {
             <div class="field">
               <label>Did repair cost money?</label>
-              <div class="form-row">
-                <button class="btn btn-sm" (click)="costingForm.set(true)">Yes</button>
+              <div class="btn-group">
+                <button class="btn btn-sm btn-primary" (click)="costingForm.set(true)">Yes</button>
                 <button class="btn btn-sm" (click)="resolve()">No</button>
               </div>
             </div>
@@ -29,7 +48,7 @@ import { ExpenseRecord, MockDataService, nextId } from '../../../core/mock-data.
           @if (costingForm()) {
             <div class="field">
               <label for="amount">Amount</label>
-              <input id="amount" type="number" name="amount" [(ngModel)]="amount" />
+              <input id="amount" type="number" name="amount" [(ngModel)]="amount" placeholder="BDT" />
             </div>
             <div class="field">
               <label for="bearer">Who bears this?</label>
@@ -42,6 +61,11 @@ import { ExpenseRecord, MockDataService, nextId } from '../../../core/mock-data.
               <button class="btn btn-primary" (click)="resolve()">Save &amp; resolve</button>
             </div>
           }
+        } @else {
+          <div class="notice notice-success" style="margin-bottom:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+            <span>This ticket is resolved.</span>
+          </div>
         }
       </div>
     }
@@ -58,6 +82,16 @@ export class LandlordTicketDetailComponent {
 
   amount = 0;
   bearer: ExpenseRecord['bearer'] = 'landlord';
+
+  unitLabel(): string {
+    const u = this.data.units().find((unit) => unit.id === this.ticket()?.unitId);
+    return u?.unitNumber ?? '—';
+  }
+
+  tenantName(): string {
+    const t = this.data.tenants().find((tenant) => tenant.id === this.ticket()?.tenantId);
+    return t?.name ?? '—';
+  }
 
   askCost(): void {
     this.asking.set(true);

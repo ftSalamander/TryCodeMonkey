@@ -8,7 +8,7 @@ import { MockDataService, PaymentRecord, nextId } from '../../../core/mock-data.
   imports: [FormsModule],
   template: `
     <h1>Receive payment</h1>
-    <div class="card stack" style="max-width:520px;">
+    <div class="card stack form-card">
       <div class="field">
         <label for="tenant">Select tenant</label>
         <select id="tenant" name="tenant" [(ngModel)]="tenantId">
@@ -20,7 +20,10 @@ import { MockDataService, PaymentRecord, nextId } from '../../../core/mock-data.
       </div>
 
       @if (tenantId) {
-        <p><strong>Total due:</strong> {{ totalDue() }}</p>
+        <div class="notice notice-info" style="margin-bottom:0.5rem;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span><strong>Total due:</strong> ৳{{ totalDue() }}</span>
+        </div>
 
         <div class="field">
           <label for="method">Payment method</label>
@@ -33,7 +36,7 @@ import { MockDataService, PaymentRecord, nextId } from '../../../core/mock-data.
 
         <div class="field">
           <label for="amount">Amount paid</label>
-          <input id="amount" type="number" name="amount" [(ngModel)]="amount" />
+          <input id="amount" type="number" name="amount" [(ngModel)]="amount" placeholder="BDT" />
         </div>
 
         <div class="actions-row">
@@ -41,7 +44,10 @@ import { MockDataService, PaymentRecord, nextId } from '../../../core/mock-data.
         </div>
 
         @if (saved()) {
-          <p class="hint-text">Payment saved. {{ amount >= totalDue() ? 'Marked fully paid.' : 'Marked partially paid — remaining ' + (totalDue() - amount) + '.' }}</p>
+          <div class="notice notice-success" style="margin-bottom:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+            <span>Payment saved. {{ amount >= totalDue() ? 'Marked fully paid.' : 'Marked partially paid — remaining ৳' + (totalDue() - amount) + '.' }}</span>
+          </div>
         }
       }
     </div>

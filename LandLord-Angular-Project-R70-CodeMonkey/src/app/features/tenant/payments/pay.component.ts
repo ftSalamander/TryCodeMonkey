@@ -8,38 +8,53 @@ import { CURRENT_TENANT_ID, MockDataService, nextId } from '../../../core/mock-d
   imports: [FormsModule],
   template: `
     <h1>Payments</h1>
-    <div class="card" style="max-width:480px;">
-      <p><strong>Current due (invoice):</strong> {{ totalDue() }}</p>
-
+    <div class="card form-card">
       @if (nextInvoice(); as inv) {
-        <div class="stack" style="margin-bottom:1rem;">
-          <div class="hint-text" style="display:flex; justify-content:space-between;">
-            <span>Rent</span><span>{{ inv.rent }}</span>
+        <div class="notice notice-info" style="margin-bottom:0.9rem;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span><strong>Current due:</strong> ৳{{ totalDue() }}</span>
+        </div>
+
+        <div class="bill-lines">
+          <div class="bill-line">
+            <span>Rent</span>
+            <span class="amount">৳{{ inv.rent }}</span>
           </div>
           @for (u of inv.utilityItems; track u.label) {
-            <div class="hint-text" style="display:flex; justify-content:space-between;">
-              <span>{{ u.label }}</span><span>{{ u.amount }}</span>
+            <div class="bill-line">
+              <span>{{ u.label }}</span>
+              <span class="amount">৳{{ u.amount }}</span>
             </div>
           }
           @if (inv.prevUnpaidRolled) {
-            <div class="hint-text" style="display:flex; justify-content:space-between;">
-              <span>Previous unpaid balance</span><span>{{ inv.prevUnpaidRolled }}</span>
+            <div class="bill-line">
+              <span>Previous unpaid balance</span>
+              <span class="amount">৳{{ inv.prevUnpaidRolled }}</span>
             </div>
           }
+          <div class="bill-line total">
+            <span>Total for this bill</span>
+            <span class="amount">৳{{ inv.amount }}</span>
+          </div>
+        </div>
+      } @else {
+        <div class="notice notice-info" style="margin-bottom:0.9rem;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span><strong>Current due:</strong> ৳{{ totalDue() }}</span>
         </div>
       }
 
       <div class="field">
         <label for="amount">Amount to pay</label>
-        <input id="amount" type="number" name="amount" [(ngModel)]="amount" />
+        <input id="amount" type="number" name="amount" [(ngModel)]="amount" placeholder="BDT" />
       </div>
 
       <div class="field">
         <label for="method">Payment method</label>
-        <select id="method" name="method" [(ngModel)]="method">
-          <option value="online">Online</option>
-          <option value="cash">Cash (offline)</option>
-        </select>
+        <div class="seg" style="width:100%;">
+          <button type="button" [class.active]="method === 'online'" (click)="method = 'online'">Online</button>
+          <button type="button" [class.active]="method === 'cash'" (click)="method = 'cash'">Cash (offline)</button>
+        </div>
       </div>
 
       @if (method === 'cash') {
@@ -47,15 +62,16 @@ import { CURRENT_TENANT_ID, MockDataService, nextId } from '../../../core/mock-d
           <label for="date">Payment date</label>
           <input id="date" type="date" name="date" [(ngModel)]="date" />
         </div>
-        <button class="btn btn-primary" (click)="payCash()">Submit — awaiting landlord confirmation</button>
+        <button class="btn btn-primary btn-block" (click)="payCash()">Submit — awaiting landlord confirmation</button>
       } @else {
-        <button class="btn btn-primary" (click)="payOnline()">Open payment gateway</button>
+        <button class="btn btn-primary btn-block" (click)="payOnline()">Open payment gateway</button>
       }
 
       @if (result()) {
-        <p [class.error-text]="result()!.startsWith('Error')" [class.hint-text]="!result()!.startsWith('Error')" style="margin-top:0.75rem;">
-          {{ result() }}
-        </p>
+        <div class="notice" [class.notice-success]="!result()!.startsWith('Error')" [class.notice-warning]="result()!.startsWith('Error')" style="margin-bottom:0;margin-top:0.9rem;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>{{ result() }}</span>
+        </div>
       }
     </div>
   `,

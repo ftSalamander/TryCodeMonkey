@@ -10,51 +10,62 @@ import { MockDataService, nextId } from '../../../core/mock-data.service';
   template: `
     <h1>Register tenant (walk-in)</h1>
 
-    <div class="card stack" style="max-width:640px;">
+    <div class="card stack form-card-lg">
       <div>
-        <h3>1. Tenant info</h3>
+        <h3 class="card-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          1 &middot; Tenant info
+        </h3>
         <div class="form-row">
           <div class="field">
             <label for="name">Full name</label>
-            <input id="name" name="name" [(ngModel)]="name" required />
+            <input id="name" name="name" [(ngModel)]="name" placeholder="e.g. Rahim Uddin" required />
           </div>
           <div class="field">
             <label for="phone">Phone</label>
-            <input id="phone" name="phone" [(ngModel)]="phone" required />
+            <input id="phone" name="phone" [(ngModel)]="phone" placeholder="e.g. 01XXX-XXXXXX" required />
           </div>
         </div>
         <div class="form-row">
           <div class="field">
             <label for="email">Email</label>
-            <input id="email" type="email" name="email" [(ngModel)]="email" required />
+            <input id="email" type="email" name="email" [(ngModel)]="email" placeholder="name@example.com" required />
           </div>
           <div class="field">
             <label for="nationalId">National ID (or passport)</label>
-            <input id="nationalId" name="nationalId" [(ngModel)]="nationalId" required />
+            <input id="nationalId" name="nationalId" [(ngModel)]="nationalId" placeholder="e.g. 1234567890" required />
           </div>
         </div>
         @if (nidError()) {
-          <p class="error-text">{{ nidError() }}</p>
+          <div class="notice notice-warning" style="margin-bottom:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            <span>{{ nidError() }}</span>
+          </div>
         }
       </div>
 
       <div>
-        <h3>2. Assign unit &amp; agreement</h3>
+        <h3 class="card-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg>
+          2 &middot; Assign unit &amp; agreement
+        </h3>
         <div class="field">
           <label for="unit">Vacant unit</label>
           <select id="unit" name="unit" [(ngModel)]="unitId">
             @for (u of vacantUnits(); track u.id) {
-              <option [value]="u.id">{{ propertyName(u.propertyId) }} &gt; {{ u.unitNumber }} &gt; {{ u.rent }}/mo</option>
+              <option [value]="u.id">{{ propertyName(u.propertyId) }} &gt; {{ u.unitNumber }} &gt; ৳{{ u.rent }}/mo</option>
             }
           </select>
         </div>
-        <div class="field">
-          <label for="terms">Lease terms</label>
-          <input id="terms" name="terms" [(ngModel)]="terms" placeholder="e.g. 12-month lease" />
-        </div>
-        <div class="field">
-          <label for="deposit">Security deposit</label>
-          <input id="deposit" type="number" name="deposit" [(ngModel)]="deposit" />
+        <div class="form-row">
+          <div class="field">
+            <label for="terms">Lease terms</label>
+            <input id="terms" name="terms" [(ngModel)]="terms" placeholder="e.g. 12-month lease" />
+          </div>
+          <div class="field">
+            <label for="deposit">Security deposit</label>
+            <input id="deposit" type="number" name="deposit" [(ngModel)]="deposit" placeholder="BDT" />
+          </div>
         </div>
       </div>
 

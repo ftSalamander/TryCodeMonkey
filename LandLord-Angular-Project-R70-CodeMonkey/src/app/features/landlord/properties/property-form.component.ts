@@ -9,18 +9,19 @@ import { MockDataService, nextId } from '../../../core/mock-data.service';
   imports: [FormsModule],
   template: `
     <h1>Add property</h1>
-    <div class="card" style="max-width:520px;">
+    <div class="card form-card">
       <div class="field">
         <label for="name">Property name</label>
-        <input id="name" name="name" [(ngModel)]="name" required />
+        <input id="name" name="name" [(ngModel)]="name" placeholder="e.g. Greenview Tower" required />
       </div>
       <div class="field">
         <label for="address">Address</label>
-        <input id="address" name="address" [(ngModel)]="address" required />
+        <input id="address" name="address" [(ngModel)]="address" placeholder="e.g. 12/A Dhanmondi, Dhaka" required />
       </div>
       <div class="actions-row">
-        <button class="btn btn-primary" (click)="save()">Validate & save</button>
+        <button class="btn btn-primary" (click)="save()">Save property</button>
       </div>
+      <p class="hint-text" style="margin:0.5rem 0 0;">After saving you can add units, register tenants, and bills will track against this property.</p>
     </div>
   `,
 })

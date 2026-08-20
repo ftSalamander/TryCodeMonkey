@@ -9,29 +9,31 @@ import { MockDataService, PropertyType, Unit, UtilityItem, nextId } from '../../
   imports: [FormsModule],
   template: `
     <h1>{{ editing ? 'Edit unit' : 'Add unit' }}</h1>
-    <div class="card" style="max-width:520px;">
+    <div class="card form-card">
       <div class="field">
         <label for="unitNumber">Unit number</label>
-        <input id="unitNumber" name="unitNumber" [(ngModel)]="unitNumber" required />
+        <input id="unitNumber" name="unitNumber" [(ngModel)]="unitNumber" placeholder="e.g. A-201" required />
       </div>
-      <div class="field">
-        <label for="propertyType">Property type</label>
-        <select id="propertyType" name="propertyType" [(ngModel)]="propertyType">
-          <option value="apartment">Flat / Apartment</option>
-          <option value="room">Room / Sublet</option>
-          <option value="office">Office Space</option>
-        </select>
+      <div class="form-row">
+        <div class="field">
+          <label for="propertyType">Property type</label>
+          <select id="propertyType" name="propertyType" [(ngModel)]="propertyType">
+            <option value="apartment">Flat / Apartment</option>
+            <option value="room">Room / Sublet</option>
+            <option value="office">Office Space</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status" name="status" [(ngModel)]="status">
+            <option value="vacant">Vacant</option>
+            <option value="occupied">Occupied</option>
+          </select>
+        </div>
       </div>
       <div class="field">
         <label for="rent">Rent</label>
-        <input id="rent" type="number" name="rent" [(ngModel)]="rent" required />
-      </div>
-      <div class="field">
-        <label for="status">Status</label>
-        <select id="status" name="status" [(ngModel)]="status">
-          <option value="vacant">Vacant</option>
-          <option value="occupied">Occupied</option>
-        </select>
+        <input id="rent" type="number" name="rent" [(ngModel)]="rent" placeholder="Monthly rent in BDT" required />
       </div>
 
       <div class="field">
@@ -61,7 +63,10 @@ import { MockDataService, PropertyType, Unit, UtilityItem, nextId } from '../../
         <button class="btn btn-primary" (click)="save()">Save unit</button>
       </div>
       @if (posted()) {
-        <p class="hint-text" style="margin-top:0.75rem;">Vacant unit — ad auto-posted to BariVara.com.</p>
+        <div class="notice notice-success" style="margin-top:0.9rem;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+          <span>Vacant unit — ad auto-posted to BariVara.com.</span>
+        </div>
       }
     </div>
   `,

@@ -22,34 +22,31 @@ import { AuthService, UserRole } from '../../core/auth.service';
       </div>
 
       @if (step() === 1) {
-        <p>Select account type</p>
-        <div class="form-row">
-          <button class="btn" [class.btn-primary]="accountType === 'tenant'" (click)="accountType = 'tenant'; next()">
-            Tenant
-          </button>
-          <button class="btn" [class.btn-primary]="accountType === 'landlord'" (click)="accountType = 'landlord'; next()">
-            Landlord
-          </button>
+        <p>Who are you?</p>
+        <div class="seg" style="width:100%;">
+          <button type="button" [class.active]="accountType === 'tenant'" (click)="accountType = 'tenant'; next()">Tenant</button>
+          <button type="button" [class.active]="accountType === 'landlord'" (click)="accountType = 'landlord'; next()">Landlord</button>
         </div>
+        <p class="hint-text">Tenants pay rent &amp; log issues; landlords run properties, billing and the ledger.</p>
       }
 
       @if (step() === 2) {
         <p>Enter your details</p>
         <div class="field">
           <label for="name">Full name</label>
-          <input id="name" name="name" [(ngModel)]="name" required />
+          <input id="name" name="name" [(ngModel)]="name" placeholder="e.g. Rahim Uddin" required />
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" type="email" name="email" [(ngModel)]="email" required />
+          <input id="email" type="email" name="email" [(ngModel)]="email" placeholder="name@example.com" required />
         </div>
         <div class="field">
           <label for="phone">Phone</label>
-          <input id="phone" name="phone" [(ngModel)]="phone" required />
+          <input id="phone" name="phone" [(ngModel)]="phone" placeholder="e.g. 01XXX-XXXXXX" required />
         </div>
         <div class="field">
           <label for="password">Password</label>
-          <input id="password" type="password" name="password" [(ngModel)]="password" required />
+          <input id="password" type="password" name="password" [(ngModel)]="password" placeholder="Create a strong password" required />
         </div>
         <div class="actions-row">
           <button class="btn" (click)="back()">Back</button>
@@ -73,7 +70,7 @@ import { AuthService, UserRole } from '../../core/auth.service';
         <p>Enter the OTP code sent to {{ email }}</p>
         <div class="field">
           <label for="otp">OTP code</label>
-          <input id="otp" name="otp" [(ngModel)]="otp" maxlength="6" />
+          <input id="otp" name="otp" [(ngModel)]="otp" maxlength="6" placeholder="123456" />
           <span class="hint-text">Demo code: 123456</span>
         </div>
         @if (otpError()) {
@@ -85,7 +82,7 @@ import { AuthService, UserRole } from '../../core/auth.service';
         </div>
       }
 
-      <p style="margin-top:1rem;">Already have an account? <a routerLink="/auth/login">Log in</a></p>
+      <p class="auth-alt" style="margin-top:1rem;">Already have an account? <a routerLink="/auth/login">Log in</a></p>
     </div>
   `,
 })
